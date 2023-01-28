@@ -1,0 +1,33 @@
+---
+- name: Carl Daniel Manas
+  id: 1000006
+  pages:
+    - 1
+    - 2
+    - 3
+    - 4
+  groups:
+    - 1
+    - 2
+    - 3
+    - 4
+- name: Danilo Manas
+  id: 1000006
+  pages:
+    - 1
+    - 2
+    - 3
+    - 
+  photos:
+    - 12323423
+    - 23423653
+    - 45643563
+  groups:
+    - 1:
+      - photos: 
+        - 2
+        - 3
+        - 4
+    - 2
+    - 3
+    - 4
