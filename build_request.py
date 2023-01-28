@@ -22,12 +22,12 @@ Bs_data = BeautifulSoup(data, "xml")
 # `unique`
 b_issue = Bs_data.find_all('issue')
  
-cookie = re.compile("\nCookie: .*; PHPSESSID=(.*?(?:;|\r))")
+cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
 
 for issue in b_issue:
     base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
     print(issue.path.text)
-    print(base64decoded_request)
-    print(cookie.findall(base64decoded_request))
-    #print(re.sub('\nCookie: .*; PHPSESSID=(.*?(?:;|\r))', r'TAE', base64decoded_request, count=1))
+    #print(base64decoded_request)
+    #print(cookie.findall(base64decoded_request))
+    print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n)))', lambda match: match.group(1), base64decoded_request))
 
