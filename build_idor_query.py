@@ -27,7 +27,7 @@ cookie = re.compile("\nCookie: .*; PHPSESSID=(.*?(?:;|\r))")
 for issue in b_issue:
     base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
     print(issue.path.text)
-    #print(base64decoded_request)
+    print(base64decoded_request)
     print(cookie.findall(base64decoded_request))
-    #print(re.sub("\nCookie: .*; PHPSESSID=(.*(?:;|\r))", "TAE", base64decoded_request))
+    #print(re.sub('\nCookie: .*; PHPSESSID=(.*?(?:;|\r))', r'TAE', base64decoded_request, count=1))
 
