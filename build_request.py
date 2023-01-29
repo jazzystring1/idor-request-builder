@@ -24,13 +24,19 @@ b_issue = Bs_data.find_all('issue')
  
 cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
 
-def process_match(match):
+def process_header_match(match):
+    #Replace the value of a chosen cookie(group 1) from the whole match(group 0) which is the Cookie header 
     return match.group(0).replace(match.group(1), "TAE")
+
+#def process_parameter_match(match):
+#    return match.group
     
 for issue in b_issue:
     base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
     print(issue.path.text)
     #print(base64decoded_request)
     #print(cookie.findall(base64decoded_request))
-    print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', lambda match: process_match(match), base64decoded_request))
+    print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', lambda match: process_header_match(match), base64decoded_request))
+
+    print(re.sub('(username=.*?&).+', lambda match: process_match(match), base64decoded_request))
 
