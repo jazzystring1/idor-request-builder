@@ -24,10 +24,13 @@ b_issue = Bs_data.find_all('issue')
  
 cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
 
+def process_match(match):
+    return match.group(0).replace(match.group(1), "TAE")
+    
 for issue in b_issue:
     base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
     print(issue.path.text)
     #print(base64decoded_request)
     #print(cookie.findall(base64decoded_request))
-    print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n)))', lambda match: match.group(1), base64decoded_request))
+    print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', lambda match: process_match(match), base64decoded_request))
 
