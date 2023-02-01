@@ -31,9 +31,44 @@ def get_keys(data, target, array=False):
             if str(v) == target:
                 result.append(copy(path))
             path.pop()
-    
+
+#get headers of profile_id from UserAuthenticationConfig.yaml
+def get_authentication_headers(profile_id, header_name):
+    with open('UserAuthenticationConfig.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        for user in data:
+            if(str(user['id']) == profile_id):
+                for header in user['authentication_headers']:
+                    if header_name in header:
+                        for k, v in header[header_name].items():
+                            if isinstance(v, int):
+                                header[header_name][k] = str(header[header_name][k])
+                        return header[header_name]
+
+def get_csrf_token_endpoint(profile_id):
+    with open('UserAuthenticationConfig.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        for user in data:
+            if(str(user['id']) == profile_id):
+                return user['csrf_token']['config']['endpoint']
+
+def get_csrf_matcher_regex(profile_id):
+    with open('UserAuthenticationConfig.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        for user in data:
+            if(str(user['id']) == profile_id):
+                return user['csrf_token']['config']['matcher_regex']
+
+def get_csrf_token(profile_id):
+    url = get_csrf_token_endpoint("100000619818670")
+    matcher_regex = get_csrf_matcher_regex("100000619818670")
+    cookies = get_authentication_headers("100000619818670", "Cookie")
+    response = requests.get(url, cookies = cookies)
+    token = re.search(r'' + matcher_regex '', response.text)
+    return token.group(1)
+                
 # Open the file and load the file
-with open('UserAssetsInfo.yaml') as f:
+with open('UserAssetsInfo.yml') as f:
     data = yaml.load(f, Loader=SafeLoader)
     for user in data:
         get_keys(user, "carl daniel")
@@ -48,47 +83,24 @@ def process_header_match(match):
 
 with open('sample_burp.xml', 'r') as f:
     data = f.read()
- 
-# Passing the stored data inside
-# the beautifulsoup parser, storing
-# the returned object
-Bs_data = BeautifulSoup(data, "xml")
- 
-# Finding all instances of tag
-# `unique`
-b_issue = Bs_data.find_all('issue')
+    Bs_data = BeautifulSoup(data, "xml")
+    b_issue = Bs_data.find_all('issue')
 
-"""
+
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--parameters', dest='parameters', type=str, help='List endpoints that match with given parameter')
+    parser.add_argument('--profile', dest='profile', type=str, help='List endpoints that match with given parameter')
     args = parser.parse_args()
 
-    print (args.parameters)
+    if(isinstance(args.profile, str)):
+        with open('sample_burp.xml', 'r') as f:
+            data = f.read()
+            Bs_data = BeautifulSoup(data, "xml")
+            b_issue = Bs_data.find_all('issue')
+            for issue in b_issue:
+                base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
+                print(issue.path.text)
+                print(re.search('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', base64decoded_request))
 
-    cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
-        
-    for issue in b_issue:
-        base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
-        print(issue.path.text)
-        #print(base64decoded_request)
-        #print(cookie.findall(base64decoded_request))
-        print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', lambda match: process_header_match(match), base64decoded_request))
-
-        #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
-"""
-
-
-
-
-url = 'https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream'
-
-#use the 'cookies' parameter to send cookies to the server:
-response = requests.get(url, cookies = {"xs": "49:n5YavaO6gByIPg:2:1675259587:-1:8029", "c_user": "100000619818670"})
-
-#formatted_response = response.text.replace("/*<!-- fetch-stream -->*/", "")
-#print(json.loads(formatted_response))
-test = '\"dtsg\\\":{\\\"token\\\":\\\"NAcNhyYJT9yDdMYI1UCWAk4-TQ1m_pAG0t242h3KuVA70U6n5QaNslQ:49:1675228876\\\",\\\"valid_for\\\":86400,\\\"expire\\\":1675327446},\\\"dtsg_ag\\\":{\\\"token\\\":\\\"AQzZWKcrxUipLlMbJEQ3YN-30X0RDXAvLDRKkeZ9lMxXZwQH:49:1675228876\\\",\\\"valid_for\\\":604800,\\\"'
-fb_dtsg = re.search(r'(?:"dtsg\\\\\\":{\\\\\\"token\\\\\\":\\\\\\"(.*?)\\\\\\)', response.text)
-
-print(fb_dtsg.group(1))
+                #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
+                cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')

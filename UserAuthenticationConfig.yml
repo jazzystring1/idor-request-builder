@@ -1,11 +1,16 @@
 ---
-- id: 1000006456
+- id: 100000619818670
   name: Carl Daniel Manas
   authentication_headers:
-    - cookie: 
-      - xs: XXX23123
-      - c_user: 10000006
+    - Cookie: 
+        xs: 3:GxkOzN1_uvIWPA:2:1673581311:-1:8029::AcWZF0dwcQZG_50h8DCvHWaKm5q-z2RNqVSTc-WLfw
+        c_user: 100000619818670
   csrf_token:
-    - config:
-      - endpoint: https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream
-      - matcher:  
+    config:
+      name: fb_dtsg
+      endpoint: https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream
+      matcher_regex: (?:"dtsg\\\\\\":{\\\\\\"token\\\\\\":\\\\\\"(.*?)\\\\\\)
+      in_parameter: true
+      in_header: false
+  dynamic_cookies:
+    - xs
