@@ -35,7 +35,7 @@ def get_keys(data, target, array=False):
 with open('UserAssetsInfo.yaml') as f:
     data = yaml.load(f, Loader=SafeLoader)
     for user in data:
-        get_keys(user, "46345")
+        get_keys(user, "carl daniel")
     print(result)
 
 def process_header_match(match):
