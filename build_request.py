@@ -84,7 +84,7 @@ if(__name__ == "__main__"):
 url = 'https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream'
 
 #use the 'cookies' parameter to send cookies to the server:
-response = requests.get(url, cookies = {"xs": "49:NB7uLkuozGl8eg:2:1675228876:-1:8029::AcWMExfPinsI9x8aEJaA0OIYnzaV71ho4-HENHTo0Q", "c_user": "100000619818670"})
+response = requests.get(url, cookies = {"xs": "49:n5YavaO6gByIPg:2:1675259587:-1:8029", "c_user": "100000619818670"})
 
 #formatted_response = response.text.replace("/*<!-- fetch-stream -->*/", "")
 #print(json.loads(formatted_response))
