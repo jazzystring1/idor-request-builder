@@ -1,0 +1,11 @@
+---
+- id: 1000006456
+  name: Carl Daniel Manas
+  authentication_headers:
+    - cookie: 
+      - xs: XXX23123
+      - c_user: 10000006
+  csrf_token:
+    - config:
+      - endpoint: https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream
+      - matcher:  

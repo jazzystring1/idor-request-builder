@@ -3,8 +3,9 @@ from bs4 import BeautifulSoup
 import re
 import base64
 import yaml
-import sys
+import json
 import argparse
+import requests
 from copy import copy
 from yaml.loader import SafeLoader
 
@@ -57,6 +58,7 @@ Bs_data = BeautifulSoup(data, "xml")
 # `unique`
 b_issue = Bs_data.find_all('issue')
 
+"""
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser()
     parser.add_argument('--parameters', dest='parameters', type=str, help='List endpoints that match with given parameter')
@@ -74,3 +76,14 @@ if(__name__ == "__main__"):
         print(re.sub('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', lambda match: process_header_match(match), base64decoded_request))
 
         #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
+"""
+
+
+
+
+url = 'https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream'
+
+#use the 'cookies' parameter to send cookies to the server:
+x = requests.get(url, cookies = {"xs": "49:NB7uLkuozGl8eg:2:1675228876:-1:8029::AcWMExfPinsI9x8aEJaA0OIYnzaV71ho4-HENHTo0Q", "c_user": "100000619818670"})
+
+print(json.loads(x.text))
