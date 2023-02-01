@@ -11,22 +11,31 @@ from yaml.loader import SafeLoader
 result = []
 path = []
 
-def get_keys(d, target, array=True):
-    for k, v in d.items():
-        path.append(k)
-        if isinstance(v, dict):
-            get_keys(v, target, array=True)
-        if isinstance(v, list):
-            print("YAY")    
-        if str(v) == target:
-            result.append(copy(path))
-        path.pop()
+def get_keys(data, target, array=False):
+    if(array):
+        for v in data:
+            if isinstance(v, dict):
+                get_keys(v, target)
+            if isinstance(v, list):
+                get_keys(v, target, array=True)    
+            if str(v) == target:
+                result.append(copy(path))
+    else:
+        for k, v in data.items():
+            path.append(k)
+            if isinstance(v, dict):
+                get_keys(v, target)
+            if isinstance(v, list):
+                get_keys(v, target, array=True)  
+            if str(v) == target:
+                result.append(copy(path))
+            path.pop()
     
 # Open the file and load the file
 with open('UserAssetsInfo.yaml') as f:
     data = yaml.load(f, Loader=SafeLoader)
     for user in data:
-        get_keys(user, "1000006456")
+        get_keys(user, "46345")
     print(result)
 
 def process_header_match(match):
