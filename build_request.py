@@ -86,9 +86,9 @@ url = 'https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream'
 #use the 'cookies' parameter to send cookies to the server:
 response = requests.get(url, cookies = {"xs": "49:NB7uLkuozGl8eg:2:1675228876:-1:8029::AcWMExfPinsI9x8aEJaA0OIYnzaV71ho4-HENHTo0Q", "c_user": "100000619818670"})
 
-formatted_response = response.text.replace("/*<!-- fetch-stream -->*/", "")
-print(json.loads(formatted_response))
-#test = '"dtsg\\\":{\\\"token\\\":\\\"NAcNhyYJT9yDdMYI1UCWAk4-TQ1m_pAG0t242h3KuVA70U6n5QaNslQ:49:1675228876\\\"'
-#fb_dtsg = re.search('\(?:"dtsg\\\\\\":{\\\\\\"token\\\\\\":\\\\\\"(.*?\\\\\\))', response.text)
+#formatted_response = response.text.replace("/*<!-- fetch-stream -->*/", "")
+#print(json.loads(formatted_response))
+test = '\"dtsg\\\":{\\\"token\\\":\\\"NAcNhyYJT9yDdMYI1UCWAk4-TQ1m_pAG0t242h3KuVA70U6n5QaNslQ:49:1675228876\\\",\\\"valid_for\\\":86400,\\\"expire\\\":1675327446},\\\"dtsg_ag\\\":{\\\"token\\\":\\\"AQzZWKcrxUipLlMbJEQ3YN-30X0RDXAvLDRKkeZ9lMxXZwQH:49:1675228876\\\",\\\"valid_for\\\":604800,\\\"'
+fb_dtsg = re.search('/(?:"dtsg\\\\\\":{\\\\\\"token\\\\\\":\\\\\\"(.*?\\\\\\))/gm', response.text)
 
-#print(fb_dtsg)
+print(fb_dtsg)
