@@ -31,6 +31,7 @@ def get_keys(data, target, array=False):
             if str(v) == target:
                 result.append(copy(path))
             path.pop()
+    return result
 
 #get headers of profile_id from UserAuthenticationConfig.yaml
 def get_authentication_headers(profile_id, header_name):
@@ -45,6 +46,12 @@ def get_authentication_headers(profile_id, header_name):
                                 header[header_name][k] = str(header[header_name][k])
                         return header[header_name]
 
+def get_edges(value):
+    with open('UserAssetsInfo.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        for user in data:
+            return get_keys(user, value)
+
 def get_csrf_token_endpoint(profile_id):
     with open('UserAuthenticationConfig.yml') as f:
         data = yaml.load(f, Loader=SafeLoader)
@@ -58,21 +65,22 @@ def get_csrf_matcher_regex(profile_id):
         for user in data:
             if(str(user['id']) == profile_id):
                 return user['csrf_token']['config']['matcher_regex']
+def get_searcher_cookie(profile_id):
+    with open('UserAuthenticationConfig.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        for user in data:
+            if(str(user['id']) == profile_id):
+                for k, v in user['searcher']['config']['cookies'].items():
+                    return k + "=" + str(v)
 
 def get_csrf_token(profile_id):
     url = get_csrf_token_endpoint("100000619818670")
     matcher_regex = get_csrf_matcher_regex("100000619818670")
     cookies = get_authentication_headers("100000619818670", "Cookie")
     response = requests.get(url, cookies = cookies)
-    token = re.search(r'' + matcher_regex '', response.text)
+    token = re.search(r'' + matcher_regex + '', response.text)
     return token.group(1)
                 
-# Open the file and load the file
-with open('UserAssetsInfo.yml') as f:
-    data = yaml.load(f, Loader=SafeLoader)
-    for user in data:
-        get_keys(user, "carl daniel")
-    print(result)
 
 def process_header_match(match):
     #Replace the value of a chosen cookie(group 1) from the whole match(group 0) 
@@ -89,18 +97,24 @@ with open('sample_burp.xml', 'r') as f:
 
 if(__name__ == "__main__"):
     parser = argparse.ArgumentParser()
-    parser.add_argument('--profile', dest='profile', type=str, help='List endpoints that match with given parameter')
+    parser.add_argument('-profile', dest='profile_id', type=str, help='')
     args = parser.parse_args()
 
-    if(isinstance(args.profile, str)):
+    if(isinstance(args.profile_id, str)):
         with open('sample_burp.xml', 'r') as f:
             data = f.read()
             Bs_data = BeautifulSoup(data, "xml")
             b_issue = Bs_data.find_all('issue')
+            cookie = get_searcher_cookie(args.profile_id)
+
             for issue in b_issue:
                 base64decoded_request = base64.b64decode(issue.requestresponse.request.text).decode()
                 print(issue.path.text)
-                print(re.search('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n|$))).+', base64decoded_request))
+                search_via_cookie_result = re.search('Cookie:(?=.*(' + cookie + '(?:;|\r|\n|$|\s))).+', base64decoded_request)
+                if search_via_cookie_result is None:
+                    continue
+                print(get_edges("422352436"))
 
                 #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
                 cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
+            

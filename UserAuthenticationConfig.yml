@@ -12,5 +12,7 @@
       matcher_regex: (?:"dtsg\\\\\\":{\\\\\\"token\\\\\\":\\\\\\"(.*?)\\\\\\)
       in_parameter: true
       in_header: false
-  dynamic_cookies:
-    - xs
+  searcher:
+    config:
+      cookies:
+        c_user: 100000619818670
