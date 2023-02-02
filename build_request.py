@@ -52,6 +52,14 @@ def get_edges(value):
         for user in data:
             return get_keys(user, value)
 
+def get_associate_id(edges, target_profile_id):
+    print(edges)
+    with open('UserAssetsInfo.yml') as f:
+        data = yaml.load(f, Loader=SafeLoader)
+        for user in data:
+            if(str(user['id']) == target_profile_id):
+                return user[edges];               
+
 def get_csrf_token_endpoint(profile_id):
     with open('UserAuthenticationConfig.yml') as f:
         data = yaml.load(f, Loader=SafeLoader)
@@ -113,8 +121,9 @@ if(__name__ == "__main__"):
                 search_via_cookie_result = re.search('Cookie:(?=.*(' + cookie + '(?:;|\r|\n|$|\s))).+', base64decoded_request)
                 if search_via_cookie_result is None:
                     continue
-                print(get_edges("422352436"))
-
+                x = get_edges("422352436")
+                print(x[0][0])
+                #print(get_associate_id(get_edges("422352436"), "10000064562"))
                 #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
                 cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
             
