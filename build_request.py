@@ -53,12 +53,23 @@ def get_edges(value):
             return get_keys(user, value)
 
 def get_associate_id(edges, target_profile_id):
-    print(edges)
-    with open('UserAssetsInfo.yml') as f:
-        data = yaml.load(f, Loader=SafeLoader)
-        for user in data:
-            if(str(user['id']) == target_profile_id):
-                return user[edges];               
+    if(len(edges) == 1):
+        edges = edges[0]
+        with open('UserAssetsInfo.yml') as f:
+            data = yaml.load(f, Loader=SafeLoader)
+            for user in data:
+                if(str(user['id']) == target_profile_id):
+                    data = user
+                    for key in edges:
+                        if key in data:
+                            data = data[key]
+                        else:
+                            # handle the case when the key does not exist
+                            data = None
+                            break
+                    return data
+    else:
+        print("Duplicated edges. Not allowed")           
 
 def get_csrf_token_endpoint(profile_id):
     with open('UserAuthenticationConfig.yml') as f:
@@ -108,6 +119,7 @@ if(__name__ == "__main__"):
     parser.add_argument('-profile', dest='profile_id', type=str, help='')
     args = parser.parse_args()
 
+    """
     if(isinstance(args.profile_id, str)):
         with open('sample_burp.xml', 'r') as f:
             data = f.read()
@@ -121,9 +133,12 @@ if(__name__ == "__main__"):
                 search_via_cookie_result = re.search('Cookie:(?=.*(' + cookie + '(?:;|\r|\n|$|\s))).+', base64decoded_request)
                 if search_via_cookie_result is None:
                     continue
-                x = get_edges("422352436")
-                print(x[0][0])
+                x = get_edges("1285645")
+                #print(x[0][0])
                 #print(get_associate_id(get_edges("422352436"), "10000064562"))
                 #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
                 cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
+    """
+    edges = get_edges("1285645")
+    print(get_associate_id(edges=edges, target_profile_id="10000064562"))
             
