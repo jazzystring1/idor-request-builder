@@ -52,23 +52,49 @@ def get_edges(value):
         for user in data:
             return get_keys(user, value)
 
+# This function takes a list of edges and a target profile ID as inputs and returns data associated with the ID.
 def get_associate_id(edges, target_profile_id):
+    # Check if there is only one edge in the list.
     if(len(edges) == 1):
+        # If there is only one edge, set the variable to the first element in the list.
         edges = edges[0]
+        # Open the YAML file containing the data.
         with open('UserAssetsInfo.yml') as f:
+            # Load the data using the SafeLoader.
             data = yaml.load(f, Loader=SafeLoader)
+            # Loop through the data to find the target profile ID.
             for user in data:
                 if(str(user['id']) == target_profile_id):
+                    # Set the data variable to the object containing the target profile ID.
                     data = user
-                    for key in edges:
+                    # Loop through each edge.
+                    for index, key in enumerate(edges):
+                        # Check if the current edge is an integer.
+                        # This means we need to select any of those field's value.
+                        if(isinstance(key, int)):
+                            # Get the next edge value.
+                            next_edge = edges[index + 1]
+                            # Check keys in the target profile object.
+                            for index, key in enumerate(data):
+                                if(isinstance(key, dict)):
+                                    for key, value in key.items():
+                                        if(isinstance(value, dict)):
+                                            # Check if the next edge is in the value.
+                                            if next_edge in value:
+                                                # Set the data variable to the value associated with the next edge.
+                                                data = data[index][key]
+                            continue 
+                        # If the key exists in the data object, set the data variable to the value associated with the key.
                         if key in data:
                             data = data[key]
                         else:
-                            # handle the case when the key does not exist
+                            # If the key does not exist, set the data variable to None and break the loop.
                             data = None
                             break
-                    return data
+                    # Return the data associated with the target profile ID.
+                    return data[0]
     else:
+        # If there is more than one edge, print an error message and return None.
         print("Duplicated edges. Not allowed")           
 
 def get_csrf_token_endpoint(profile_id):
@@ -118,8 +144,7 @@ if(__name__ == "__main__"):
     parser = argparse.ArgumentParser()
     parser.add_argument('-profile', dest='profile_id', type=str, help='')
     args = parser.parse_args()
-
-    """
+    
     if(isinstance(args.profile_id, str)):
         with open('sample_burp.xml', 'r') as f:
             data = f.read()
@@ -139,6 +164,6 @@ if(__name__ == "__main__"):
                 #print(re.sub('(username=.*?&).+', lambda match: process_parameter_match(match), base64decoded_request))
                 cookie = re.compile('Cookie:(?=.*PHPSESSID=(.*?(?:;|\r|\n))).+')
     """
-    edges = get_edges("1285645")
+    edges = get_edges("28282828")
     print(get_associate_id(edges=edges, target_profile_id="10000064562"))
             

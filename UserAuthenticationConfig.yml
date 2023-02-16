@@ -8,6 +8,7 @@
   csrf_token:
     config:
       name: fb_dtsg
+      method: POST
       endpoint: https://mtouch.facebook.com/test/1?__a&ajaxpipe&ajaxpipe_fetch_stream
       matcher_regex: (?:"dtsg\\\\\\":{\\\\\\"token\\\\\\":\\\\\\"(.*?)\\\\\\)
       in_parameter: true
